@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SheherSetu Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #90caf9, #e3f2fd);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 420px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      animation: fade 0.5s ease;
+    }
+
+    .step.active {
+      display: block;
+      opacity: 1;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #1976d2;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      outline-color: #64b5f6;
+      background: #f9f9f9;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #42a5f5, #1e88e5);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #1e88e5, #1565c0);
+    }
+
+    .progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+
+    .progress span {
+      height: 10px;
+      flex: 1;
+      margin: 0 3px;
+      background: #cfd8dc;
+      border-radius: 5px;
+    }
+
+    .progress span.active {
+      background: #1976d2;
+    }
+
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: block;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <div class="progress" id="progressBar">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <form id="multiStepForm" action="/login" method="post">
+
+    <!-- Step 1: Role -->
+    <div class="step active">
+      <h2>who are you?</h2>
+      <label for="roleSelect">Role</label>
+      <select id="roleSelect" name="role" required>
+        <option value="">-- select --</option>
+        <option value="society_head">Society Head</option>
+        <option value="member">Society Member</option>
+        <option value="block_head">Block Head</option>
+        <option value="treasurer">Treasurer</option>
+      </select>
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 2: Username -->
+    <div class="step">
+      <h2>Username</h2>
+      <input type="text" name="username" placeholder="Enter your name" required />
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 3: Email -->
+    <div class="step">
+      <h2>Email</h2>
+      <input type="email" name="email" placeholder="Enter your email" required />
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 4: Age -->
+    <div class="step">
+      <h2>Age</h2>
+      <input type="number" name="age" placeholder="Enter your age" required />
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 5: Address Details -->
+    <div class="step">
+      <h2>Address Details</h2>
+
+      <label>Society Name</label>
+      <!--<select name="society" required>-->
+        <!--<option value="">society</option>-->
+        <input type="text" name="society_name" placeholder="Enter your society name" required />
+      </select>
+
+      <label>Block</label>
+      <input type="text" name="block" placeholder="Enter your block" required />
+
+      <label>Floor</label>
+      <input type="text" name="floor" placeholder="Enter floor number" required />
+
+      <label>Flat Number</label>
+      <input type="text" name="flat" placeholder="Enter flat number" required />
+
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 6: Mobile Number -->
+    <div class="step">
+      <h2>Mobile Number</h2>
+      <input type="tel" name="mobile_number" placeholder="Enter your mobile number" required />
+      <button type="submit">Submit</button>
+    </div>
+    
+  </form>
+</div>
+
+<script>
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".step");
+  const progressSpans = document.querySelectorAll("#progressBar span");
+
+  function nextStep() {
+    const current = steps[currentStep];
+    const input = current.querySelector("input, select");
+    if (!input.checkValidity()) {
+      input.reportValidity();
+      return;
+    }
+
+    steps[currentStep].classList.remove("active");
+    progressSpans[currentStep].classList.remove("active");
+
+    currentStep++;
+    if (currentStep < steps.length) {
+      steps[currentStep].classList.add("active");
+      progressSpans[currentStep].classList.add("active");
+    }
+  }
+
+  document.getElementById("multiStepForm").addEventListener("submit", function (e) {
+    // e.preventDefault();
+    alert("✅ Form submitted successfully!");
+    // TODO: You can now send the data to your Flask backend here.
+  });
+</script>
+
+</body>
+</html>

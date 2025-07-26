@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Complaint Form with Embedded Map</title>
+  <style>
+    #mapFrame {
+      width: 100%;
+      height: 300px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    #mapLink {
+      display: none;
+    }
+
+    .fancy-button {
+      display: inline-block;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      background-color: #4285F4;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      text-decoration: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .fancy-button:hover {
+      background-color: #3367D6;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    #issue {
+      width: 100%;
+      min-height: 60px;
+      resize: none;
+      padding: 10px;
+      font-size: 14px;
+      line-height: 1.4;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .cool-button {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      background-color: #a1e326;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .cool-button:hover {
+      background-color: #4fe206;
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-label {
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: #FF9800;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-right: 10px;
+    }
+
+    .file-label:hover {
+      background-color: #fb8c00;
+      transform: scale(1.05);
+    }
+
+    #file-name {
+      font-style: italic;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <form id="complaintForm" method="POST" action="/" enctype="multipart/form-data">
+    <textarea id="issue" name="issue" placeholder="Describe the issue" required></textarea><br><br>
+
+    <label for="image" class="file-label">📷 Choose Image</label>
+    <input type="file" id="image" name="image" accept="image/*" class="file-input">
+    <span id="file-name">No file chosen</span><br><br>
+
+    <input type="text" id="location" name="location" placeholder="Your location will appear here" readonly
+      required><br><br>
+
+    <button type="button" onclick="getLocation()" class="cool-button">📍 Get My Location</button><br><br>
+
+    <a id="mapLink" class="fancy-button" href="#" target="_blank">📍 View on Google Maps</a>
+
+    <iframe id="mapFrame"
+      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14728.643306955142!2d88.41130235!3d22.647791549999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1752480628577!5m2!1sen!2sin"
+      allowfullscreen="" title="Google Maps location">
+    </iframe><br>
+
+    <button type="submit" class="cool-button">Submit</button>
+  </form>
+
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          const addressField = document.getElementById("location");
+          addressField.value = `Lat: ${lat}, Lon: ${lon}`;
+
+          document.getElementById("mapFrame").src = `https://www.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+
+          const mapLink = document.getElementById("mapLink");
+          mapLink.href = `https://www.google.com/maps?q=${lat},${lon}`;
+          mapLink.style.display = "inline";
+
+          const newUrl = `${window.location.origin}${window.location.pathname}?lat=${lat}&lon=${lon}`;
+          window.history.replaceState({}, '', newUrl);
+        }, showError);
+      } else {
+        alert("Geolocation not supported by your browser.");
+      }
+    }
+
+    function showError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("Permission denied for geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("Location unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("Request timed out.");
+          break;
+        default:
+          alert("An unknown error occurred.");
+          break;
+      }
+    }
+
+    document.getElementById('issue').addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+
+    document.getElementById('image').addEventListener('change', function () {
+      const fileName = this.files[0]?.name || 'No file chosen';
+      document.getElementById('file-name').textContent = fileName;
+    });
+  </script>
+</body>
+
+</html>

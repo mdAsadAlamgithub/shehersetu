@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SheherSetu</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding-bottom: 0;
+            /* Removed padding since nav is not fixed at bottom */
+            background: #f5f8fa;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: auto;
+            padding: 20px 15px;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 15px;
+        }
+
+        .logo,
+        .bell {
+            width: 24px;
+            height: 24px;
+        }
+
+        .welcome-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .action-item {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .action-item img {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .civic-news,
+        .trending-section {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .civic-news h3,
+        .trending-section h3 {
+            margin-top: 0;
+        }
+
+        .complaint-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .complaint-row:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge.pending {
+            background: #f57c00;
+        }
+
+        .badge.resolved {
+            background: #388e3c;
+        }
+
+        .badge.progress {
+            background: #1976d2;
+        }
+
+        .bottom-nav {
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #ddd;
+            box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+        }
+
+        .nav-item a {
+            text-decoration: none;
+            color: inherit;
+            margin-top: 4px;
+        }
+
+        /* Camera Modal */
+        #cameraModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #cameraModal video,
+        #cameraModal canvas {
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        #cameraModal button {
+            margin: 10px;
+            padding: 8px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            background: #1976d2;
+            color: white;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+
+</head>
+
+<div class="header-icons">
+    <div class="container">
+        <header class="app-header">
+            <img src="{{ url_for('static', filename='images/logo.webp') }}" alt="logo" class="logo" />
+            <h1>SheherSetu</h1>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/login">
+                    <span class="material-symbols-outlined">person</span>
+                </a>
+            </div>
+        </header>
+
+        <div class="actions">
+            <div class="action-item">
+                <span class="material-symbols-outlined">menu</span>
+                <p>total complains</p>
+            </div>
+            <div class="action-item">
+                <span class="material-symbols-outlined">check_circle</span>
+                <p>resolved</p>
+            </div>
+            <div class="action-item">
+                <span class="material-symbols-outlined">pending_actions</span>
+                <p>pending</p>
+            </div>
+        </div>
+        <div class="welcome-box">
+            <span>thanks for giving contribution toward your nation</span>
+        </div>
+        
+        <div class="trending-section">
+            <h3>Trending Complaints Nearby</h3>
+            <div id="complaintList">
+                <!-- Dynamic complaint data will be loaded here -->
+            </div>
+        </div>
+
+
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <span class="material-symbols-outlined">home</span>
+                <a href="/">home</a>
+            </div>
+            <div class="nav-item">
+                <span class="material-symbols-outlined">menu</span>
+                <a href="/geolocation">complaints</a>
+            </div>
+            <div class="nav-item" onclick="openCamera()">
+                <span class="material-symbols-outlined">photo_camera</span>
+                <a href="#">camera</a>
+            </div>
+            <div class="nav-item">
+                <span class="material-symbols-outlined">dashboard</span>
+                <a href="/dashboard">dashboard</a>
+            </div>
+            <div class="nav-item">
+                <span class="material-symbols-outlined">person</span>
+                <a href="/logine">profile</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="cameraModal">
+        <video id="cameraView" autoplay></video>
+        <button onclick="takePhoto()">Capture</button>
+        <canvas id="photoCanvas"></canvas>
+        <button onclick="closeCamera()">Close</button>
+        <button <button type="submit">Submit</button>
+    </div>
+    <script>
+        function openCamera() {
+            const modal = document.getElementById("cameraModal");
+            modal.style.display = "flex";
+            const video = document.getElementById("cameraView");
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => alert("Camera access denied: " + err));
+        }
+
+        function closeCamera() {
+            const modal = document.getElementById("cameraModal");
+            const video = document.getElementById("cameraView");
+            const stream = video.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+            modal.style.display = "none";
+        }
+
+        function takePhoto() {
+            const video = document.getElementById("cameraView");
+            const canvas = document.getElementById("photoCanvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+            alert("Photo captured!");
+        }
+
+        // ✅ Fetch complaints dynamically from Flask backend
+        window.onload = function () {
+    fetch('/recent_complaints')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('complaintList').innerHTML = html;
+        });
+};
+    </script>
+
+    </body>
+
+</html>
