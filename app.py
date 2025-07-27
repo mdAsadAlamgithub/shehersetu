@@ -132,7 +132,7 @@ def users():
                 <li>{{ user[0] }} - {{ user[2] }} - {{ user[3] }} - {{ user[4] }}</li>
             {% endfor %}
         </ul>
-    ''', email=session['email'])
+    ''',users=users, email=session['email'])
 
 @app.route('/recent_complaints')
 def recent_complaints():
